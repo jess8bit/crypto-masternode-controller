@@ -1,6 +1,6 @@
-# Cream Masternode Controller Box
+# Kalkulus Masternode Controller Box
 
-![Cream logo](/img/kalkulus.png)
+![Kalkulus logo](/img/logo_header.png)
 
 ## Tools used
 
