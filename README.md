@@ -2,6 +2,9 @@
 
 ![Kalkulus logo](/img/logo_header.png)
 
+A guide and toolbox to setup a masternode controller VM for Kalkulus in the most convenient way.
+
+
 ## Tools used
 
 This setup is designed around Vagrant. Vagrant is an open source tool from the DevOps world that is often used to provision development environments automatically. 

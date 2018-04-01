@@ -54,44 +54,6 @@ else
 
 fi
 
-#
-# generate a convenient desktop file
-#
-cat >${HOME}/Desktop/${CODENAME}.desktop <<EOL
-[Desktop Entry]
-Version=1.0
-Name=${CODENAME}-qt
-Comment=Masternode Controller Wallet
-GenericName=${CODENAME}-Qt
-Keywords=${CODENAME};Crypto;Masternode;
-Exec=${WALLET_BIND}/${CODENAME}-qt
-Terminal=false
-X-MultipleArgs=false
-Type=Application
-Icon=/vagrant/img/kalkulus.png
-Categories=Network;
-StartupNotify=true
-Actions=start;reindex;help;
- 
-[Desktop Action start]
-Name=start
-Exec=${WALLET_BIND}/${CODENAME}-qt
-
-[Desktop Action reindex]
-Name=reindex
-Exec=killall ${CODENAME}-qt && ${WALLET_BIND}/${CODENAME}-qt -reindex
- 
-[Desktop Action help]
-Name=masternode setup help
-Exec=/usr/bin/firefox https://masternodes.github.io/vps/
-EOL
-
-chmod +x ${HOME}/Desktop/${CODENAME}.desktop
-
-#
-# generate the config w/ official addnodes
-#
-
 # check if a config template exists and use it
 if [ -f /vagrant/conf/${CODENAME}.conf ]; then
   echo "config template exists, copy it to it's final destination"
@@ -109,11 +71,54 @@ echo "echo starting klksd"
 nohup ${WALLET_BIND}/klksd &
 sleep 5
 
-#
+
+# check if a binary has been placed in the bin directory
+if [ ! -f ${HOME}/Desktop/${CODENAME}.desktop ]; then
+
+	cat >${HOME}/Desktop/${CODENAME}.desktop <<-EOL
+	[Desktop Entry]
+	Version=1.0
+	Name=${CODENAME}-qt
+	Comment=Masternode Controller Wallet
+	GenericName=${CODENAME}-Qt
+	Keywords=${CODENAME};Crypto;Masternode;
+	Exec=${WALLET_BIND}/${CODENAME}-qt
+	Terminal=false
+	X-MultipleArgs=false
+	Type=Application
+	Icon=/vagrant/img/kalkulus.png
+	Categories=Network;
+	StartupNotify=true
+	Actions=start;reindex;help;
+
+	[Desktop Action start]
+	Name=start
+	Exec=${WALLET_BIND}/${CODENAME}-qt
+
+	[Desktop Action reindex]
+	Name=reindex
+	Exec=killall ${CODENAME}-qt && ${WALLET_BIND}/${CODENAME}-qt -reindex
+
+	[Desktop Action help]
+	Name=masternode setup help
+	Exec=/usr/bin/firefox https://masternodes.github.io/vps/
+	EOL
+fi;
+
+chmod +x ${HOME}/Desktop/${CODENAME}.desktop
+
+# remove dummy desktop file
+rm ${HOME}/Desktop/Please_Wait_Installing_Wallet.desktop
+
 # run the cli tools to get a masternode privkey
 # and deposit address 
 COLLATERAL_ADDRESS="$(${WALLET_BIND}/klks-cli getnewaddress \"klks_masternode\")"
 MASTERNODE_PRIVKEY="$(${WALLET_BIND}/klks-cli masternode genkey)"
+
+# prefill all available infos in masternode.conf
+if [ -f ${WALLET_DIR}/masternode.conf ]; then
+  echo "#klks_masternode INSERT_VPS_IPV4_HERE:51121 ${MASTERNODE_PRIVKEY} INSERT_MASTERNODE_OUTPUTS_CONTENT_HERE" >> ${WALLET_DIR}/masternode.conf
+fi
 
 reset
 #####

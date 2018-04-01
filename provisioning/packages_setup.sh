@@ -1,6 +1,10 @@
 #!/bin/bash
 # this script installs all desired packages in the new guest VM
 
+# create dummy desktop file
+touch /home/vagrant/Desktop/Please_Wait_Installing_Wallet.desktop
+chmod 777 /home/vagrant/Desktop/Please_Wait_Installing_Wallet.desktop
+
 # update repositories
 apt-get update && apt-get -y upgrade
 
