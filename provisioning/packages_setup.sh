@@ -4,6 +4,7 @@
 # create dummy desktop file
 touch /home/vagrant/Desktop/Please_Wait_Installing_Wallet.desktop
 chmod 777 /home/vagrant/Desktop/Please_Wait_Installing_Wallet.desktop
+chown vagrant /home/vagrant/Desktop/Please_Wait_Installing_Wallet.desktop
 
 # update repositories
 apt-get update && apt-get -y upgrade

@@ -105,10 +105,11 @@ if [ ! -f ${HOME}/Desktop/${CODENAME}.desktop ]; then
 	EOL
 fi;
 
-chmod +x ${HOME}/Desktop/${CODENAME}.desktop
+chmod +x ~/Desktop/*.desktop
+chown ${WALLET_USER} ~/Desktop/*.desktop
 
 # remove dummy desktop file
-rm ${HOME}/Desktop/Please_Wait_Installing_Wallet.desktop
+rm /home/vagrant/Desktop/Please_Wait_Installing_Wallet.desktop
 
 # run the cli tools to get a masternode privkey
 # and deposit address 
@@ -117,7 +118,7 @@ MASTERNODE_PRIVKEY="$(${WALLET_BIND}/klks-cli masternode genkey)"
 
 # prefill all available infos in masternode.conf
 if [ -f ${WALLET_DIR}/masternode.conf ]; then
-  echo "#klks_masternode INSERT_VPS_IPV4_HERE:51121 ${MASTERNODE_PRIVKEY} INSERT_MASTERNODE_OUTPUTS_CONTENT_HERE" >> ${WALLET_DIR}/masternode.conf
+  echo "klks_masternode 127.0.0.1:51121 ${MASTERNODE_PRIVKEY} 3741187b3dcf0151587381c3ffe6f6af2d0c5da3bbe4208f78025ddaaae2e939 0" >> ${WALLET_DIR}/masternode.conf
 fi
 
 reset
