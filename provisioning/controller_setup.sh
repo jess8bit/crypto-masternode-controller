@@ -127,7 +127,7 @@ echo "****************************************************"
 echo "SETUP FINISHED: "
 echo "Please send the 20k collateral to the following address:"
 echo "${COLLATERAL_ADDRESS}"
-echo "and note the follwing masternode privatkey for your VPS installation in the next step:"
+echo "and note the follwing masternode privatekey for your VPS installation in the next step:"
 echo "${MASTERNODE_PRIVKEY}"
 echo "****************************************************"
 
