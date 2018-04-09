@@ -69,7 +69,7 @@ chown -R ${WUSER}:${WUSER} ${WALLET_DIR}
 # start the daemon in background 
 echo "echo starting klksd"
 nohup ${WALLET_BIND}/klksd &
-sleep 5
+sleep 15
 
 
 # check if a binary has been placed in the bin directory
