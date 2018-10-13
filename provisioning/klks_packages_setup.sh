@@ -10,6 +10,7 @@ chown vagrant /home/vagrant/Desktop/Please_Wait_Installing_Wallet.desktop
 apt-get update && apt-get -y upgrade
 
 # install dependencies
+# check https://github.com/kalkulusteam/klks/blob/master/doc/build-unix.md
 apt-get -qqy -o=Dpkg::Use-Pty=0 install build-essential g++ lightdm-gtk-greeter \
     protobuf-compiler libboost-all-dev autotools-dev lightdm libprotobuf-dev \
     automake libcurl4-openssl-dev libssl-dev libdb++-dev pwgen git apt-utils \

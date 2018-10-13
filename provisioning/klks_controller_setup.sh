@@ -1,25 +1,26 @@
 #!/bin/bash
 # this script installs all desired packages in the new guest VM
 
-CODENAME="klks"
+CODENAME="$1"
 GIT_URL="https://github.com/kalkulusteam/klks.git"
-SCVERSION="tags/v2.5.1"
+SCVERSION="tags/v2.6.0"
 WALLET_USER="vagrant"
 WALLET_DIR="${HOME}/.${CODENAME}"
 WALLET_CONF="${WALLET_DIR}/${CODENAME}.conf"
 WALLET_BIND="${WALLET_DIR}/bin"
 WALLET_BINR="klks_x86-x64_linux_V2.tar.gz"
+WALLET_DAEMON="$1d"
 
 # create the wallet directory
 mkdir -p ${WALLET_BIND}
 
 # check if a binary has been placed in the bin directory
-if [ -f /vagrant/bin/${WALLET_BINR} ]; then
+if [ -f ${WALLET_BIND}/${WALLET_BINR} ]; then
 
 	echo "binary release found, don't compile but copy it to it's final destination"
-	cp /vagrant/bin/${WALLET_BINR} /tmp && cd /tmp
+	cp ${WALLET_BIND}/${WALLET_BINR} /tmp && cd /tmp
 	tar --strip-components=1 -zxf ${WALLET_BINR}
-	cp ${CODENAME}* ${WALLET_DIR}/bin/
+	cp ${CODENAME}* ${WALLET_BIND}/
 
 # we are building from source
 else
@@ -27,7 +28,7 @@ else
 	# build the QT5 wallet, ONLY if it doesn't exist yet
 	#
 	# daemon not found compile it
-	if [ ! -f ${WALLET_DIR}/bin/${CODENAME}-qt ]; then
+	if [ ! -f ${WALLET_BIND}/${CODENAME}-qt ]; then
 		echo "wallet binary does not exist"
 		cd ${HOME} 
 		# clone the sources and build from master
@@ -46,6 +47,7 @@ else
 		fi
 
 		# build this shit now  
+		# check install doc at https://github.com/kalkulusteam/klks and https://github.com/kalkulusteam/klks/blob/master/doc/build-unix.md
 		./autogen.sh
 		./configure --disable-dependency-tracking --enable-tests=no --without-miniupnpc --with-incompatible-bdb --prefix=${WALLET_DIR} CFLAGS="-march=native" LIBS="-lcurl -lssl -lcrypto -lz" 
 		make
@@ -64,11 +66,11 @@ echo "rpcuser=$(pwgen 25 1)" >> ${WALLET_CONF}
 echo "rpcpassword=$(pwgen 35 1)" >> ${WALLET_CONF}
 
 # change permissions as required
-chown -R ${WUSER}:${WUSER} ${WALLET_DIR}
+chown -R ${WALLET_USER}:${WALLET_USER} ${WALLET_DIR}
 
 # start the daemon in background 
-echo "echo starting klksd"
-nohup ${WALLET_BIND}/klksd &
+echo "echo starting ${WALLET_DAEMON}"
+nohup ${WALLET_BIND}/${WALLET_DAEMON} &
 sleep 15
 
 
@@ -86,7 +88,7 @@ if [ ! -f ${HOME}/Desktop/${CODENAME}.desktop ]; then
 	Terminal=false
 	X-MultipleArgs=false
 	Type=Application
-	Icon=/vagrant/img/kalkulus.png
+	Icon=/vagrant/img/desktop_${CODENAME}.png
 	Categories=Network;
 	StartupNotify=true
 	Actions=start;reindex;help;
@@ -113,26 +115,33 @@ rm /home/vagrant/Desktop/Please_Wait_Installing_Wallet.desktop
 
 # run the cli tools to get a masternode privkey
 # and deposit address 
-COLLATERAL_ADDRESS="$(${WALLET_BIND}/klks-cli getnewaddress \"klks_masternode\")"
+COLLATERAL_ADDRESS="$(${WALLET_BIND}/klks-cli getnewaddress \"${MN_ALIAS}\")"
 MASTERNODE_PRIVKEY="$(${WALLET_BIND}/klks-cli masternode genkey)"
 
 # prefill all available infos in masternode.conf
+# check port in https://github.com/kalkulusteam/klks
 if [ -f ${WALLET_DIR}/masternode.conf ]; then
-  echo "klks_masternode 127.0.0.1:51121 ${MASTERNODE_PRIVKEY} 3741187b3dcf0151587381c3ffe6f6af2d0c5da3bbe4208f78025ddaaae2e939 0" >> ${WALLET_DIR}/masternode.conf
+  echo "${MN_ALIAS} 127.0.0.1:51121 ${MASTERNODE_PRIVKEY} 3741187b3dcf0151587381c3ffe6f6af2d0c5da3bbe4208f78025ddaaae2e939 0" >> ${WALLET_DIR}/masternode.conf
+  echo "${MN_ALIAS} YOUR_VPS_IP:51121 ${MASTERNODE_PRIVKEY} YOUR_TRX_ID YOUR_TRX_OUTPUT_IDX" >> ${WALLET_DIR}/masternode.conf
 fi
 
 reset
 #####
 echo "****************************************************"
-echo "SETUP FINISHED: "
-echo "Please send the 20k collateral to the following address:"
+echo "SETUP FINISHED."
+echo "NEXT STEPS: "
+echo "Send the collateral to the following address of your wallet:"
 echo "${COLLATERAL_ADDRESS}"
-echo "and note the follwing masternode privatekey for your VPS installation in the next step:"
+echo "Keep note of the following masternode privatekey for your VPS installation in the next steps:"
 echo "${MASTERNODE_PRIVKEY}"
+echo "Once the VPS is intalled and you have sent the collateral, open ${WALLET_DIR}/masternode.conf and:"
+echo "- Replace the IP with the public IP of your MN VPS"
+echo "- Replace the transaction id and output index of your collateral transaction"
+echo "- Restart the wallet"
 echo "****************************************************"
 
 
-echo "stopping klksd again"
-kill $(pidof klksd)
+echo "stopping ${WALLET_DAEMON} again"
+kill $(pidof ${WALLET_DAEMON})
 
 echo "Your masternode controller is now ready, please encrypt your wallet!"
