@@ -11,17 +11,20 @@ WALLET_USER="vagrant"
 WALLET_DIR="${HOME}/.${CRYPTO_CODE}"
 WALLET_CONF="${WALLET_DIR}/${CRYPTO_CODE}.conf"
 WALLET_BIND="${WALLET_DIR}/bin"
-WALLET_BINR="klks_x86-x64_linux_V2.tar.gz"
+# https://github.com/kalkulusteam/klks/releases
+WALLET_BINR="klks-2.6.0-linux64.zip"
 WALLET_DAEMON="$1d"
+WALLET_GUI="${WALLET_BIND}/${CRYPTO_CODE}-qt"
+WALLET_CLI="$1-cli"
 
 # create the wallet directory
 mkdir -p ${WALLET_BIND}
 
-# check if a binary has been placed in the bin directory
-if [ -f ${WALLET_BIND}/${WALLET_BINR} ]; then
+# check if a binary has been placed in the bin directory of shared dir
+if [ -f /vagrant/bin/${WALLET_BINR} ]; then
 
 	echo "binary release found, don't compile but copy it to it's final destination"
-	cp ${WALLET_BIND}/${WALLET_BINR} /tmp && cd /tmp
+	cp /vagrant/bin/${WALLET_BINR} /tmp && cd /tmp
 	tar --strip-components=1 -zxf ${WALLET_BINR}
 	cp ${CRYPTO_CODE}* ${WALLET_BIND}/
 
@@ -87,7 +90,7 @@ if [ ! -f ${HOME}/Desktop/${CRYPTO_CODE}.desktop ]; then
 	Comment=Masternode Controller Wallet
 	GenericName=${CRYPTO_CODE}-Qt
 	Keywords=${CRYPTO_CODE};Crypto;Masternode;
-	Exec=${WALLET_BIND}/${CRYPTO_CODE}-qt
+	Exec=${WALLET_GUI}
 	Terminal=false
 	X-MultipleArgs=false
 	Type=Application
@@ -98,11 +101,11 @@ if [ ! -f ${HOME}/Desktop/${CRYPTO_CODE}.desktop ]; then
 
 	[Desktop Action start]
 	Name=start
-	Exec=${WALLET_BIND}/${CRYPTO_CODE}-qt
+	Exec=${WALLET_GUI}
 
 	[Desktop Action reindex]
 	Name=reindex
-	Exec=killall ${CRYPTO_CODE}-qt && ${WALLET_BIND}/${CRYPTO_CODE}-qt -reindex
+	Exec=killall ${CRYPTO_CODE}-qt && ${WALLET_GUI} -reindex
 
 	[Desktop Action help]
 	Name=masternode setup help
@@ -118,8 +121,8 @@ rm /home/vagrant/Desktop/Please_Wait_Installing_Wallet.desktop
 
 # run the cli tools to get a masternode privkey
 # and deposit address 
-COLLATERAL_ADDRESS="$(${WALLET_BIND}/klks-cli getnewaddress \"${MN_ALIAS}\")"
-MASTERNODE_PRIVKEY="$(${WALLET_BIND}/klks-cli masternode genkey)"
+COLLATERAL_ADDRESS="$(${WALLET_BIND}/${WALLET_CLI} getnewaddress \"${MN_ALIAS}\")"
+MASTERNODE_PRIVKEY="$(${WALLET_BIND}/${WALLET_CLI} masternode genkey)"
 
 # prefill all available infos in masternode.conf
 # we need to put something for the wallet to be able to start, but
@@ -134,7 +137,7 @@ fi
 reset
 #####
 echo "****************************************************"
-echo "SETUP FINISHED."
+echo "SETUP FINISHED for controller ${MN_ALIAS}"
 echo "NEXT STEPS: "
 echo "Send the collateral to the following address of your wallet:"
 echo "${COLLATERAL_ADDRESS}"
