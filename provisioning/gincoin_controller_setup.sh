@@ -15,7 +15,8 @@ WALLET_BIND="${WALLET_DIR}/bin"
 # https://github.com/gincoin-dev/gincoin-core/releases
 # WALLET_BINR="gincoin-binaries-linux-64bit.tar.gz"
 # WALLET_BINR="gincoincore-1.1.0-linux-64bit.tar.gz"
-WALLET_BINR="bin.zip"
+WALLET_BINR="no"
+# WALLET_BINR="bin.zip"
 WALLET_DAEMON="$1d"
 WALLET_GUI="${WALLET_BIND}/${CRYPTO_CODE}-qt"
 WALLET_CLI="$1-cli"
@@ -60,7 +61,8 @@ else
 		# build this shit now  
 		# check install doc at https://github.com/gincoin-dev/gincoin-core/blob/1.1.0.0/INSTALL and https://github.com/kalkulusteam/klks/blob/master/doc/build-unix.md
 		./autogen.sh
-		./configure --disable-dependency-tracking --enable-tests=no --without-miniupnpc --with-incompatible-bdb --prefix=${WALLET_DIR} CFLAGS="-march=native" LIBS="-lcurl -lssl -lcrypto -lz" 
+		# ./configure --disable-dependency-tracking --enable-tests=no --without-miniupnpc --with-incompatible-bdb --prefix=${WALLET_DIR} CFLAGS="-march=native" LIBS="-lcurl -lssl -lcrypto -lz" 
+		./configure --disable-dependency-tracking --enable-tests=no --without-miniupnpc  --prefix=${WALLET_DIR} CFLAGS="-march=native" LIBS="-lcurl -lssl -lcrypto -lz"
 		make
 		make install
 	fi  

@@ -5,7 +5,7 @@ Vagrant.configure(2) do |config|
 
   # if not defined, set default
   CRYPTO_CODE = 'gincoin'
-  SHORT_ID = '001'
+  SHORT_ID = '003'
   VM_NAME = "#{CRYPTO_CODE}-controller-#{SHORT_ID}"
   VM_HOSTNAME = VM_NAME
   

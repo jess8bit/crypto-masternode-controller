@@ -17,5 +17,11 @@ apt-get -qqy -o=Dpkg::Use-Pty=0 install build-essential g++ lightdm-gtk-greeter 
     pkg-config libcurl3-dev libudev-dev libqrencode-dev bsdmainutils make automake \
     pkg-config libssl-dev libgmp3-dev libevent-dev jp2a pv virtualenv autoconf \
     libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools libtool \
-    qt5-default qt5-qmake qtbase5-dev-tools libboost-dev libboost-system-dev \
-    libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev 
+    libprotobuf-dev protobuf-compiler qt5-default qt5-qmake qtbase5-dev-tools 
+
+
+# Berkeley DB	Wallet storage
+add-apt-repository ppa:bitcoin/bitcoin
+apt-get -y update
+apt-get -qqy install libdb4.8-dev libdb4.8++-dev
+
