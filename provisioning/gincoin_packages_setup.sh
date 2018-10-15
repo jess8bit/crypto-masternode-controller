@@ -21,7 +21,7 @@ apt-get -qqy -o=Dpkg::Use-Pty=0 install build-essential g++ lightdm-gtk-greeter 
 
 
 # Berkeley DB	Wallet storage
-add-apt-repository ppa:bitcoin/bitcoin
-apt-get -y update
-apt-get -qqy install libdb4.8-dev libdb4.8++-dev
+# add-apt-repository ppa:bitcoin/bitcoin
+# apt-get -y update
+# apt-get -qqy install libdb4.8-dev libdb4.8++-dev
 
