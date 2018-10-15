@@ -11,7 +11,9 @@ Vagrant.configure(2) do |config|
   
   # server or desktop ubuntu image
   config.vm.box = "lasp/ubuntu16.04-desktop"
-	
+  # vagrant box update
+  # config.vm.box_version = "2018.10.15.0"
+  
   # set default ip
   config.vm.network "private_network", ip: "10.10.15.10"
 
